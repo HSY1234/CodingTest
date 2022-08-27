@@ -13,7 +13,7 @@ Queue<Integer> queue = new LinkedList<>(); //int형 queue 선언, linkedlist 이
 ## 추가
 
 ```java
-Queue<Integer> stack = new LinkedList<>();
+Queue<Integer> queue = new LinkedList<>();
 queue.add(1);
 queue.offer(3);
 ```
