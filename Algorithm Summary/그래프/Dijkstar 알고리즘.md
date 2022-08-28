@@ -1,0 +1,229 @@
+# 다익스트라 알고리즘 (최단 경로 알고리즘, Greedy 알고리즘)
+
+- 시작정점에서 다른 모든 정점으로의 최단 경로를 구하는 알고리즘
+- 시작 정점에서 거리가 최소인 정점을 선택해 나가면서 최단경로를 구하는 방식이다
+- 탐욕기법을 사용한 알고리즘, MST 프림 알고리즘과 비슷하다.
+
+## 수도코드
+
+s: 시작, A: 인접, D: 시작정점에서의 거리, V: 정점 집합, U: 선택한 정점 집합
+
+```
+Dijkstra(s,A,D)
+  U={s}
+
+  For 모든 정점 v
+    D[v] = A[s][v]
+
+  While U != V
+    D[w]가 최소인 정점 w 를 선택안된 집합에서 선택
+    U에 w를 포함
+    For w에 인접한 모든 미방문 정점 v
+      D[v] = min(D[v], D[w]+A[w][v])
+```
+
+## 구현 팁
+
+visted[], distance[] => 배열(index는 vertex의 숫자)
+or 우선순위 큐로 해서 큐가 전부 빌때까지(vertex에 거리저장 객체 Comparable)
+
+1. 초기값 거리 전부 매우 큰 수로 초기화
+2. 정점 선택 해당 주변 접근 가능한 노드 길이 업데이트(기존길이보다 짧으면)
+3. 최단거링니 정점선택 후 방문처리, 그리고 해당노드에서 갈수있는 거리 업데이트
+4. 3을 반복 모든노드 방문 완료시 종료
+
+## 배열 구현
+
+```java
+public class Dijkstra {
+
+	public static void main(String[] args) throws IOException {
+
+		int V ; //정점 갯수
+		int start = 0;
+		int end =  V-1; //도착점 인덱스
+		final int INFINITY = Integer.MAX_VALUE;
+
+		int[][] matrix = new int[V][V];
+		int[] distance = new int[V];
+		boolean[] visited = new boolean[V];
+
+		for(int i=0; i<V; i++){
+			st = new StringTokenizer(in.readLine().trim(), " ");
+			for(int j=0; j<V; j++){
+				matrix[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+
+		Arrays.fill(distance, INFINITY);
+		distance[start] = 0;
+
+		int min=0, current=0;
+		for(int i=0; i<V; i++){
+			//방문하지 않은 정점들 중 최소가중치의 정점 선택
+			min = INFINITY;
+			for(int j=0; j<V; j++){
+				if(!visited[j] && distance[j] < min){
+					min = distance[j];
+					current = j;
+				}
+			}
+			visited[current] = true; // 선택 정점 방문 처리
+			if(current == end){ // 선택 정점이 도착정점이면 탈출. 모든 거리 구하는게 아닌경우만
+				break;
+			}
+
+			//current정점을 경유지로 하여 갈수 있는 다른 방문하지 않은 정점들에 대한 처리
+			for(int c=0; c<V; c++){
+				if(!visited[c] && matrix[current][c] != 0
+						&&  distance[c] > min+matrix[current][c]){// 원래 계산된 거리> current까지거리(min)+ current에서 c까지 거리 인경우 업데이트
+					distance[c] = min+matrix[current][c];
+				}
+			}
+		}
+		System.out.println(distance[end]);
+
+	}
+
+}
+```
+
+## 우선순위 큐
+
+```java
+public class Dijkstra_PQ {
+
+	private static class Vertex implements Comparable<Vertex>{
+		int no;
+		int totalDistance;
+
+		public Vertex(int no, int totalDistance) {
+			this.no = no;
+			this.totalDistance = totalDistance;
+		}
+		@Override
+		public int compareTo(Vertex o) {
+			return this.totalDistance-o.totalDistance;
+		}
+		@Override
+		public String toString() {
+			return "Node [vertex=" + no + ", distance=" + totalDistance + "]";
+		}
+	}
+	public static void main(String[] args) throws IOException {
+
+		int V ; //정점 갯수
+		int start = 0; //시작점 인덱스
+		int end =  V-1; //도착점 인덱스
+		final int INFINITY = Integer.MAX_VALUE;
+
+		int[][] matrix = new int[V][V];
+		int[] distance = new int[V];
+		boolean[] visited = new boolean[V];
+
+		for(int i=0; i<V; i++){
+			st = new StringTokenizer(in.readLine().trim());
+			for(int j=0; j<V; j++){
+				matrix[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+
+		Arrays.fill(distance, INFINITY);
+
+		PriorityQueue<Vertex> pQueue = new PriorityQueue<Vertex>();
+		distance[start] = 0;
+		pQueue.offer(new Vertex(start,distance[start]));
+
+		Vertex current = null;
+      while(!pQueue.isEmpty()){
+
+			  //방문하지 않은 정점들 중 최소가중치의 정점 선택
+        current = pQueue.poll();
+        if(visited[current.no]) continue;
+
+			  visited[current.no] = true; // 선택 정점 방문 처리
+			  if(current.no == end) break; // 선택 정점이 도착정점이면 탈출.
+
+			  //current정점을 경유지로 하여 갈수 있는 다른 방문하지 않은 정점들에 대한 처리
+			  for(int c=0; c<V; c++){
+				  if(!visited[c] && matrix[current.no][c] != 0
+						  &&  distance[c] >current.totalDistance+matrix[current.no][c]){
+					  distance[c] = current.totalDistance+matrix[current.no][c];
+					  pQueue.offer(new Vertex(c,distance[c]));
+				  }
+			  }
+		  }
+		System.out.println(distance[end]);
+	}
+
+}
+
+```
+
+## 인접 리스트
+
+```java
+public class Dijkstra_AdjList {
+
+	static class Node{
+		int vertex,weight;
+		Node next;
+
+		public Node(int vertex, int weight, Node next) {
+			this.vertex = vertex;
+			this.weight = weight;
+			this.next = next;
+		}
+		@Override
+		public String toString() {
+			return "Node [vertex=" + vertex + ", weight=" + weight + ", next=" + next + "]";
+		}
+	}
+	public static void main(String[] args) throws IOException {
+		int V; //정점 갯수
+		int E; //간선 갯수
+		int start = 0;
+		int end =  V-1; //도착점 인덱스
+		final int INFINITY = Integer.MAX_VALUE;
+
+		Node[] adjList = new Node[V];
+		int[] distance = new int[V];
+		boolean[] visited = new boolean[V];
+
+		for(int i=0; i<E; i++){
+			st = new StringTokenizer(in.readLine().trim(), " ");
+			int from = Integer.parseInt(st.nextToken());
+			int to = Integer.parseInt(st.nextToken());
+			int weight = Integer.parseInt(st.nextToken());
+			adjList[from] = new Node(to, weight, adjList[from]);
+		}
+
+		Arrays.fill(distance, INFINITY);
+		distance[start] = 0;
+
+		int min=0, current=0;
+		for(int i=0; i<V; i++){
+			//출발지에서 가까운 정점을 선택한다.
+			min = INFINITY;
+			for(int j=0; j<V; j++){
+				if(!visited[j] && distance[j] < min){
+					min = distance[j];
+					current = j;
+				}
+			}
+			visited[current] = true; // 선택 정점 방문 처리
+			if(current == end) break;// 선택 정점이 도착정점 끝. 이거 빼면  출발지로부터 모든 정점 각각까지 도착하는 최소거리비용이 다 계산되는 다익스트라
+
+			//출발지에서 가까운 current정점을 경유지로 하여 갈수 있는 다른 방문하지 않은 정점들에 대한 처리
+			for(Node temp = adjList[current]; temp != null; temp=temp.next) {
+				if(!visited[temp.vertex] &&
+						distance[temp.vertex] > min+temp.weight){
+					distance[temp.vertex] = min+temp.weight;
+				}
+			}
+		}
+		System.out.println(distance[end]);
+	}
+
+}
+```
