@@ -12,8 +12,8 @@
 - ArrayList\<Generic\> al = new ArrayList\<Generic\>(): 해당 Generic으로 생성
 
 - LinkedList li = new LinkedList();
-- LinkedList<Integer> li = new LinkedList<Integer>();
-- LinkedList<Integer> li = new LinkedList<>() // 생략가능
+- LinkedList\<Integer\> li = new LinkedList\<Integer\>();
+- LinkedList\<Integer\> li = new LinkedList<>() // 생략가능
 
 # 추가
 
