@@ -115,8 +115,8 @@ public class KMP {
 	        while(j > 0 && pattern[i] != pattern[j]) j = pi[j-1];
 					// 나올땐 j=0이거나, 같은 패턴인 경우
 
-	        if(pattern[i] == pattern[j]) pi[i] = ++j;
-	        else pi[i] = 0;
+	        if(pattern[i] == pattern[j]) pi[i] = ++j;// 같은 패턴인 경우 1증가
+	        else pi[i] = 0;// j=0이니까 테이블의 그 값도 0
 	    }
 
 		int cnt = 0;
@@ -125,6 +125,8 @@ public class KMP {
 		for(int i=0,j=0; i<tLength; ++i) {
 
 			while(j>0 && text[i] != pattern[j]) j = pi[j-1];
+			//j가 0이 되거나(처음부터 시작)
+			//j가 앞에서 반복되는 패턴 매칭되는 순간까지
 
 			if(text[i] == pattern[j]) { //두 글자 일치
 				if(j == pLength-1) { // j가 패턴의 마지막 인덱스라면
@@ -132,9 +134,10 @@ public class KMP {
 					list.add((i+1)-pLength);
 					j=pi[j];
 				}else {
-					j++;
+					j++;// 다음꺼 비교를 위해 j 1증가
 				}
 			}
+			// 두 글자 일치 안하면 할거 없음
 		}
 
 		System.out.println(cnt);
