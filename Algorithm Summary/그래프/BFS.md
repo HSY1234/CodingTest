@@ -79,3 +79,25 @@ public static void bfs2(Node[] adjList, int start) {
 
 '''
 ```
+
+# BFS 유형
+
+## Flood Fill
+
+더이상 없을때까지 전체 탐색으로 확인하기
+
+1. BJ1926
+
+## 거리측정
+
+최단거리 찾기
+
+1. 이중 큐 (큐 size만큼 빼내기)
+
+- BJ2178\_탐색단계로 풀기
+
+2. dist 배열로(DP같이)
+
+- BJ2178\_거리로 풀기
+
+##
